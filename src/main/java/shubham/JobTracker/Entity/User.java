@@ -19,7 +19,10 @@ public class User {
 
     private String userName;
     private String password;
-    private String  email;
+    private String  email;// email should be unique
+
+//    private Date lastLogin;
+//    private Date lastCreatedAt;
 
     List<String> roles;
 
