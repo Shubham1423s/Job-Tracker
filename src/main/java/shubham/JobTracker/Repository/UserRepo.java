@@ -1,4 +1,4 @@
-package shubham.JobTracker.Controller.Repository;
+package shubham.JobTracker.Repository;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.data.jpa.repository.JpaRepository;
