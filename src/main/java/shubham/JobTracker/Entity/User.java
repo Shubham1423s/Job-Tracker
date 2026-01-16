@@ -1,16 +1,22 @@
 package shubham.JobTracker.Entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
+import shubham.JobTracker.JobTrackerApplication;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
+@Entity
 @Getter
 @Setter
 @Table(name = "users")
-@Entity
 public class User {
 
     @Id
@@ -19,11 +25,16 @@ public class User {
 
     private String userName;
     private String password;
-    private String  email;// email should be unique
+    private String  email;
+    private LocalDate lastLogin;
 
-//    private Date lastLogin;
-//    private Date lastCreatedAt;
+    private LocalDate createdAt;
 
     List<String> roles;
+
+    @JsonManagedReference
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
+    List<JobApplication> applications = new ArrayList<>();
+
 
 }

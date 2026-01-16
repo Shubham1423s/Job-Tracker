@@ -30,7 +30,7 @@ public class SecurityConfig {
          http
                  .csrf(csrf -> csrf.disable())
                  .authorizeHttpRequests(auth -> auth
-                         .requestMatchers("/HealthCheck","/public/**").permitAll()
+                         .requestMatchers("/HealthCheck", "/Application/**").permitAll()
                          .anyRequest().authenticated()
                  )
                  .sessionManagement(session ->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS) )

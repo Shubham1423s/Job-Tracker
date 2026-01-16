@@ -2,6 +2,7 @@ package shubham.JobTracker.Controller;
 
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.reactive.context.ReactiveWebServerApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +26,7 @@ public class userController {
        if(userList != null && ! userList.isEmpty()){
            return ResponseEntity.status(HttpStatus.OK).body(new UserResponse<>(userList,"All User"));
        }
-       return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new UserResponse<>(null,"no User Found"));
+       return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new UserResponse<>(null,"no User Found"));
 
 
    }
@@ -34,6 +35,25 @@ public class userController {
 
        userService.saveUser(user);
        return ResponseEntity.status(HttpStatus.CREATED).body(new UserResponse<>(user,"userSaved Successfully"));
+
+   }
+   @DeleteMapping("/deleteUser")
+    public ResponseEntity<UserResponse<User>> deleteUser(@RequestBody User user){
+
+        userService.deleteByUserName(user.getUserName());
+        return  ResponseEntity.status(HttpStatus.NO_CONTENT).body(new UserResponse<>());
+
+   }
+   @GetMapping("/userByUserName")
+    public ResponseEntity<UserResponse<User>> getUser(@RequestBody User user){
+
+        if(user != null){
+            userService.getUserByUserName(user.getUserName());
+            return ResponseEntity.status(HttpStatus.OK).body(new UserResponse<>());
+
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new UserResponse<>(null,"User Not found"));
+
 
    }
 

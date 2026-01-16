@@ -1,5 +1,6 @@
 package shubham.JobTracker.Entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
@@ -9,6 +10,7 @@ import shubham.JobTracker.Enums.JobType;
 import shubham.JobTracker.Enums.Source;
 import shubham.JobTracker.Enums.Status;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -30,9 +32,9 @@ public class JobApplication {
 
     private Status status;
 
-    private LocalDateTime appliedAt;
+    private LocalDate appliedAt;
 
-    private LocalDateTime lastUpdated;
+    private LocalDate lastUpdated;
 
     private Source source;
 
@@ -42,6 +44,11 @@ public class JobApplication {
 
     @Column(length = 1000)
     private String  note;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    @JsonBackReference
+     private User user;
 
 
 

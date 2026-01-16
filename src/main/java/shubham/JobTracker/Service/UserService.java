@@ -6,6 +6,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import shubham.JobTracker.Entity.User;
 import shubham.JobTracker.Repository.UserRepo;
 
@@ -30,8 +31,14 @@ public class UserService {
 
        return userRepo.findAll();
     }
-    public void findByUserName(String userName){
-       userRepo.findByUserName(userName);
+    @Transactional
+    public void deleteByUserName(String userName){
+
+       userRepo.deleteByUserName(userName);
+    }
+    public void getUserByUserName(String userName){
+
+        userRepo.findByUserName(userName);
     }
 
 

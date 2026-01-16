@@ -2,7 +2,7 @@ package shubham.JobTracker.Enums;
 
 public enum Source {
     CarrierPage,
-    LinkedIn,
+    LINKEDIN,
     Naukri,
     Indeed,
     Other
