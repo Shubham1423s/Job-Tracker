@@ -6,8 +6,11 @@ import org.springframework.boot.web.reactive.context.ReactiveWebServerApplicatio
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import shubham.JobTracker.Dto.ApplicationResponse;
 import shubham.JobTracker.Dto.UserResponse;
+import shubham.JobTracker.Entity.JobApplication;
 import shubham.JobTracker.Entity.User;
+import shubham.JobTracker.Service.JobApplicationService;
 import shubham.JobTracker.Service.UserService;
 
 import java.util.List;
@@ -18,6 +21,9 @@ public class userController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+   private JobApplicationService jobApplicationService;
 
     @GetMapping("/allUser")
    public ResponseEntity<UserResponse<List<User>>> allUser(){
@@ -56,6 +62,5 @@ public class userController {
 
 
    }
-
 
 }

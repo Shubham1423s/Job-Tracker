@@ -27,6 +27,11 @@ public class UserService {
        user.setRoles(Arrays.asList("User"));
        userRepo.save(user);
    }
+    public  void saveAdmin(User user){
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRoles(Arrays.asList("Admin","User"));
+        userRepo.save(user);
+    }
     public List<User> getAllUser(){
 
        return userRepo.findAll();
@@ -36,9 +41,9 @@ public class UserService {
 
        userRepo.deleteByUserName(userName);
     }
-    public void getUserByUserName(String userName){
+    public User getUserByUserName(String userName){
 
-        userRepo.findByUserName(userName);
+       return userRepo.findByUserName(userName);
     }
 
 
