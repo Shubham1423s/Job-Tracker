@@ -23,7 +23,7 @@ public class JwtUtil {
     }
 
     public String generateToken(String userName){
-        System.out.println("token dedo guys");
+
         return Jwts.builder()
                 .setSubject(userName)
                 .setIssuedAt(new java.util.Date())

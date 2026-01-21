@@ -27,7 +27,6 @@ public class User {
     private String password;
     private String  email;
     private LocalDate lastLogin;
-
     private LocalDate createdAt;
 
     List<String> roles;

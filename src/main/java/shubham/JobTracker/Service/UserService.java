@@ -3,6 +3,7 @@ package shubham.JobTracker.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.config.authentication.PasswordEncoderParser;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -44,6 +45,27 @@ public class UserService {
     public User getUserByUserName(String userName){
 
        return userRepo.findByUserName(userName);
+    }
+    public void updateUser(User updatedData){
+       String currentUserName = SecurityContextHolder.getContext().getAuthentication().getName();
+       User existingUser = userRepo.findByUserName(currentUserName);
+
+       if(existingUser == null){
+           throw  new UsernameNotFoundException("User not found"+ currentUserName);
+
+       }
+       if(updatedData.getPassword() != null && !updatedData.getPassword().isEmpty()){
+           existingUser.setPassword(passwordEncoder.encode(updatedData.getPassword()));
+       }
+       if(updatedData.getUserName() != null && !updatedData.getUserName().isEmpty()){
+           existingUser.setUserName(updatedData.getUserName());
+       }
+        if(updatedData.getEmail() != null && !updatedData.getEmail().isEmpty()){
+            existingUser.setEmail(updatedData.getEmail());
+        }
+        userRepo.save(updatedData);
+
+
     }
 
 

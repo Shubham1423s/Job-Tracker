@@ -1,5 +1,8 @@
 package shubham.JobTracker.Controller;
 
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -7,9 +10,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+
 @RestController
 @RequestMapping("/check")
+@Slf4j
 public class HealthCheck {
+
+//    private static  final Logger logger = LoggerFactory.getLogger(HealthCheck.class);
 
 
     @GetMapping("/HealthCheck")
@@ -22,9 +29,15 @@ public class HealthCheck {
 
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
         if(name != null){
+
+            log.info("mja ara bhai  ");
+
+
             return ResponseEntity.ok("Current User   - " + name);
         }
+
         return ResponseEntity.ok("");
+
 
 
     }
