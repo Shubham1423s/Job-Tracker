@@ -3,13 +3,22 @@ package shubham.JobTracker.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import shubham.JobTracker.Dto.Request.CreateJobApplicationRequest;
+import shubham.JobTracker.Dto.Request.UpdateJobApplicationRequest;
+import shubham.JobTracker.Dto.Response.JobApplicationResponse;
+import shubham.JobTracker.Dto.Response.JobStatsResponse;
 import shubham.JobTracker.Entity.JobApplication;
 import shubham.JobTracker.Entity.User;
 import shubham.JobTracker.Repository.JobApplicationRepo;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+
+import static shubham.JobTracker.Enums.Status.*;
 
 @Service
 public class JobApplicationService {
@@ -19,79 +28,109 @@ public class JobApplicationService {
     @Autowired
     private  UserService userService;
 
-    public List<JobApplication> allApllication(){
+    public List<JobApplicationResponse> allApllication(){
 
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userService.getUserByUserName(name);
         List<JobApplication> applications  = jobApplicationRepo.findByUser(user);
-        return applications;
+        return applications.stream()
+                .map(this::mapToResponse)
+                .toList();
     }
-    public void saveApplication(JobApplication jobApplication){
-        String userName  = SecurityContextHolder.getContext().getAuthentication().getName();
+    public JobApplicationResponse saveApplication(CreateJobApplicationRequest request){
+
+        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userService.getUserByUserName(userName);
-        jobApplication.setUser(user);
-        jobApplicationRepo.save(jobApplication);
+
+        JobApplication application = new JobApplication();
+        application.setJobTitle(request.getJobTitle());
+        application.setCompanyName(request.getCompanyName());
+        application.setJobLink(request.getJobLink());
+        application.setStatus(request.getStatus());
+        application.setSource(request.getSource());
+        application.setApplicationMode(request.getApplicationMode());
+        application.setJobtype(request.getJobType());
+        application.setNote(request.getNote());
+
+        application.setAppliedAt(LocalDate.now());
+        application.setLastUpdated(LocalDate.now());
+
+        application.setUser(user);
+       JobApplication saved =   jobApplicationRepo.save(application);
+       return mapToResponse(saved);
+
+
+    }
+    private JobApplicationResponse mapToResponse(JobApplication application) {
+
+        JobApplicationResponse response = new JobApplicationResponse();
+        response.setId(application.getId());
+        response.setJobTitle(application.getJobTitle());
+        response.setCompanyName(application.getCompanyName());
+        response.setJobLink(application.getJobLink());
+        response.setStatus(application.getStatus());
+        response.setSource(application.getSource());
+        response.setApplicationMode(application.getApplicationMode());
+        response.setJobtype(application.getJobtype());
+        response.setAppliedAt(application.getAppliedAt());
+        response.setLastUpdated(application.getLastUpdated());
+        response.setNote(application.getNote());
+
+        return response;
     }
 
     public  void deleteApplication(int id){
-        Optional<JobApplication> jobApplication = jobApplicationRepo.findById(id);
-        jobApplicationRepo.delete(jobApplication.get());
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userService.getUserByUserName(username);
+
+        JobApplication job = jobApplicationRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Job application not found"));
+
+        // user ownership check (important)
+        if(!job.getUser().equals(user.getId())){
+            throw new RuntimeException("Unauthorized delete attempt");
+        }
+
+
+        jobApplicationRepo.delete(job);
 
     }
 
-    public boolean updateApplication(int id,JobApplication jobApplication){
+    public JobApplicationResponse updateApplication(int id, UpdateJobApplicationRequest request) {
 
-        Optional<JobApplication> application = jobApplicationRepo.findById(id);
+       JobApplication existing =  jobApplicationRepo.findById(id)
+               .orElseThrow(() -> new RuntimeException("Job Application Not Found"));
 
-        if (application.isEmpty()) {
-            return false;
-        }
+        if (request.getJobTitle() != null) existing.setJobTitle(request.getJobTitle());
+        if (request.getCompanyName() != null) existing.setCompanyName(request.getCompanyName());
+        if (request.getJobLink() != null) existing.setJobLink(request.getJobLink());
+        if (request.getStatus() != null) existing.setStatus(request.getStatus());
+        if (request.getSource() != null) existing.setSource(request.getSource());
+        if (request.getApplicationMode() != null) existing.setApplicationMode(request.getApplicationMode());
+        if (request.getJobType() != null) existing.setJobtype(request.getJobType());
+        if (request.getNote() != null) existing.setNote(request.getNote());
 
-        JobApplication existingApplication = application.get();
+        // Always update timestamp
+        existing.setLastUpdated(LocalDate.now());
 
+        JobApplication saved = jobApplicationRepo.save(existing);
 
-        if (jobApplication.getJobTitle() != null) {
-            existingApplication.setJobTitle(jobApplication.getJobTitle());
-        }
-
-        if (jobApplication.getCompanyName() != null) {
-            existingApplication.setCompanyName(jobApplication.getCompanyName());
-        }
-
-        if (jobApplication.getJobLink() != null) {
-            existingApplication.setJobLink(jobApplication.getJobLink());
-        }
-
-        if (jobApplication.getStatus() != null) {
-            existingApplication.setStatus(jobApplication.getStatus());
-        }
-
-        if (jobApplication.getAppliedAt() != null) {
-            existingApplication.setAppliedAt(jobApplication.getAppliedAt());
-        }
-
-        if (jobApplication.getSource() != null) {
-            existingApplication.setSource(jobApplication.getSource());
-        }
-
-        if (jobApplication.getApplicationMode() != null) {
-            existingApplication.setApplicationMode(jobApplication.getApplicationMode());
-        }
-
-        if (jobApplication.getJobtype() != null) {
-            existingApplication.setJobtype(jobApplication.getJobtype());
-        }
-
-        if (jobApplication.getNote() != null) {
-            existingApplication.setNote(jobApplication.getNote());
-        }
-
-        existingApplication.setLastUpdated(LocalDate.now());
-
-        jobApplicationRepo.save(existingApplication);
-
-        return true;
-
-
+        return mapToResponse(saved);
     }
+
+        public JobStatsResponse getStats(User user) {
+        List<JobApplication> applications  = jobApplicationRepo.findByUser(user);
+
+        JobStatsResponse response = new JobStatsResponse();
+            response.setTotal(applications.size());
+
+            response.setApplied(applications.stream().filter(a -> a.getStatus() == APPLIED).count());
+            response.setInterview(applications.stream().filter(a -> a.getStatus() == INTERVIEW).count());
+            response.setOffer(applications.stream().filter(a -> a.getStatus() == OFFER).count());
+            response.setRejected(applications.stream().filter(a -> a.getStatus() == REJECTED).count());
+
+            return response;
+        }
+
 }

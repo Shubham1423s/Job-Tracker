@@ -6,6 +6,7 @@ public enum Status {
     OnlineAssisment,
     NoResponse,
     REJECTED,
+    OFFER,
     JOINED
 
 }

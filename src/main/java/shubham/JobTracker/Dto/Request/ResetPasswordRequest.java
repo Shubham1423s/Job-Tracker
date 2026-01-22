@@ -1,4 +1,4 @@
-package shubham.JobTracker.Dto;
+package shubham.JobTracker.Dto.Request;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -7,6 +7,6 @@ import lombok.Setter;
 @Setter
 public class ResetPasswordRequest {
 
-    String userName;
-    String newPassword;
+    private String userName;
+    private String newPassword;
 }

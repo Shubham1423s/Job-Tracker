@@ -1,7 +1,6 @@
 package shubham.JobTracker.Controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -13,10 +12,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 //import shubham.JobTracker.Config.JwtUtil;
 import shubham.JobTracker.Config.JwtUtil;
-import shubham.JobTracker.Dto.AuthRequest;
-import shubham.JobTracker.Dto.AuthResponse;
-import shubham.JobTracker.Dto.ResetPasswordRequest;
-import shubham.JobTracker.Dto.UserResponse;
+import shubham.JobTracker.Dto.Request.LoginRequest;
+import shubham.JobTracker.Dto.Response.AuthResponse;
+import shubham.JobTracker.Dto.Request.ResetPasswordRequest;
+import shubham.JobTracker.Dto.Response.UserResponse;
 import shubham.JobTracker.Entity.User;
 import shubham.JobTracker.Repository.UserRepo;
 import shubham.JobTracker.Service.UserService;
@@ -52,7 +51,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request){
+    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request){
 
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUserName(),request.getPassword()));
 

@@ -1,4 +1,4 @@
-package shubham.JobTracker.Dto;
+package shubham.JobTracker.Dto.Response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
