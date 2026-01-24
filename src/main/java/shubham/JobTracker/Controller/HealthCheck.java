@@ -16,8 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class HealthCheck {
 
-//    private static  final Logger logger = LoggerFactory.getLogger(HealthCheck.class);
-
 
     @GetMapping("/HealthCheck")
     public String healthCheck(){
@@ -29,13 +27,8 @@ public class HealthCheck {
 
         String name = SecurityContextHolder.getContext().getAuthentication().getName();
         if(name != null){
-
-            log.info("mja ara bhai  ");
-
-
             return ResponseEntity.ok("Current User   - " + name);
         }
-
         return ResponseEntity.ok("");
 
 

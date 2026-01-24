@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import shubham.JobTracker.Dto.Request.CreateJobApplicationRequest;
 import shubham.JobTracker.Dto.Request.UpdateJobApplicationRequest;
+import shubham.JobTracker.Dto.Request.UpdateUserRequest;
 import shubham.JobTracker.Dto.Response.JobApplicationResponse;
 import shubham.JobTracker.Dto.Response.UserResponse;
 import shubham.JobTracker.Entity.JobApplication;
@@ -55,15 +56,15 @@ public class userController {
     }
 
     @PostMapping("/updateUser")
-    public ResponseEntity<UserResponse<User>> updateUser(@RequestBody User user){
-        userService.updateUser(user);
-        return  ResponseEntity.status(HttpStatus.OK).body(new UserResponse<>());
+    public ResponseEntity<UserResponse> updateUser(@Valid @RequestBody UpdateUserRequest request){
+       UserResponse response =  userService.updateUser(request);
+        return  ResponseEntity.status(HttpStatus.OK).body(response);
     }
     @DeleteMapping("/deleteUser")
-    public ResponseEntity<UserResponse<User>> deleteUser(@RequestBody User user){
+    public ResponseEntity<Void> deleteUser(@RequestBody User user){
 
         userService.deleteByUserName(user.getUserName());
-        return  ResponseEntity.status(HttpStatus.NO_CONTENT).body(new UserResponse<>());
+        return  ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 
     }
 

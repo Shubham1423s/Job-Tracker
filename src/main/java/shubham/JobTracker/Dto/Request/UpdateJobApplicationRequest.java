@@ -14,13 +14,22 @@ import shubham.JobTracker.Enums.Status;
 @Setter
 public class UpdateJobApplicationRequest {
 
+    @Size(min = 2, max = 200, message = "Job title must be between 2 and 200 characters")
     private String jobTitle;
+
+    @Size(min = 2, max = 100, message = "Company name must be between 2 and 100 characters")
     private String companyName;
+
+    @Pattern(regexp = "^https?://.*", message = "Job link must be a valid URL")
     private String jobLink;
+
+
     private Status status;
     private Source source;
     private ApplicationMode applicationMode;
     private JobType jobType;
+
+    @Size(max = 1000, message = "Note cannot exceed 1000 characters")
     private String note;
 
 

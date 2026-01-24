@@ -1,22 +1,30 @@
 package shubham.JobTracker.Dto.Request;
 
+import jakarta.persistence.Entity;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Map;
-
 @Getter
 @Setter
-public class LoginRequest {
+public class CreateUserRequest {
 
     @NotNull(message ="Name is Required" )
     @Size(min = 3, max = 100, message = "Name must be between 2 and 100 characters")
-    private String userName;
+    private  String  userName;
+
 
     @NotNull(message ="Password is required" )
     @Size(min = 8, max = 50, message = "Password must be between 8 and 50 characters")
-    private String password;
+    private  String password;
+
+
+    @NotNull(message ="Email is required" )
+    @Email(message = "Invalid email format")
+    @Size(max = 255)
+    private  String email;
+
 
 }

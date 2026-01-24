@@ -24,19 +24,20 @@ public class CreateJobApplicationRequest {
     private String companyName;
 
     @Pattern(regexp = "^https?://.*", message = "Job link must be a valid URL")
-    private String jobLink; // Optional field
+    private String jobLink;
 
     @NotNull(message = "Status is required")
-    private Status status; // e.g., APPLIED, INTERVIEW, REJECTED, OFFER
+    private Status status;
 
     @NotNull(message = "Source is required")
-    private Source source; // e.g., LINKEDIN, NAUKRI, REFERRAL
+    private Source source;
 
     @NotNull(message = "Application mode is required")
-    private ApplicationMode applicationMode; // e.g., ONLINE, OFFLINE, EMAIL
+    private ApplicationMode applicationMode;
 
-//    @NotNull(message = "Job type is required")
-    private JobType jobType; // Fixed: should be jobType not jobtype
+    @NotNull(message = "Job type is required")
+    private  JobType jobType;
+
 
     @Size(max = 1000, message = "Note cannot exceed 1000 characters")
     private String note;

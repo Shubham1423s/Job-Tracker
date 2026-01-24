@@ -1,5 +1,6 @@
 package shubham.JobTracker.Controller;
 
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import shubham.JobTracker.Dto.Request.UpdateUserRequest;
 import shubham.JobTracker.Dto.Response.UserResponse;
 import shubham.JobTracker.Entity.User;
 import shubham.JobTracker.Service.UserService;
@@ -26,43 +28,38 @@ public class AdminController {
 
 
     @GetMapping("/AllUser")
-    public ResponseEntity<UserResponse<List<User>>> allUser(){
+    public ResponseEntity<List<UserResponse>> allUser(){
 
-        List<User> users  = userService.getAllUser();
+        List<UserResponse> users  = userService.getAllUser();
         if(users != null && !users.isEmpty()){
-            return  ResponseEntity.status(HttpStatus.OK).body(new UserResponse<>(users,"All Users"));
+            return  ResponseEntity.status(HttpStatus.OK).body(users);
 
         }
-        return  ResponseEntity.status(HttpStatus.NOT_FOUND).body(new UserResponse<>(null,"No User Found"));
+        return  ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
     @GetMapping("/UserByUserName")
-    public ResponseEntity<UserResponse<User>> findUserByUserName(String name){
+    public ResponseEntity<UserResponse> findUserByUserName(String name){
 
         User user= userService.getUserByUserName(name);
         if(user != null){
-            return ResponseEntity.status(HttpStatus.OK).body(new UserResponse<>(user,"user "));
+            return ResponseEntity.status(HttpStatus.OK).build();
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new UserResponse<>(null,"User Not Found"));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 
     }
-    @GetMapping("/SaveAdmin")
-    public ResponseEntity<UserResponse<User>>  saveAdmin(@RequestBody User user){
 
-        userService.saveAdmin(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new UserResponse<>(user,"User created successfully"));
-
-    }
     @GetMapping("/DeleteAdmin")
-    public ResponseEntity<UserResponse<User>> deleteAdmin(String name){
+    public ResponseEntity<Void> deleteAdmin(String name){
 
         userService.deleteByUserName(name);
-        return  ResponseEntity.status(HttpStatus.NO_CONTENT).body(new UserResponse<>(null,"User Deleted Successfully"));
+        return  ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+
     }
 
     @GetMapping("/UpdateAdmin")
-    public ResponseEntity<UserResponse<Void>> updateAdmin(@RequestBody User user){
-        userService.updateUser(user);
-        return ResponseEntity.status(HttpStatus.OK).body(new UserResponse<>());
+    public ResponseEntity<UserResponse> updateAdmin(@Valid @RequestBody UpdateUserRequest request){
+       UserResponse response =  userService.updateUser(request);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
 
     }
 

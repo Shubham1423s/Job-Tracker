@@ -1,5 +1,6 @@
 package shubham.JobTracker.Service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -18,9 +19,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+
 import static shubham.JobTracker.Enums.Status.*;
 
 @Service
+@Slf4j
 public class JobApplicationService {
 
     @Autowired
@@ -43,6 +46,7 @@ public class JobApplicationService {
         User user = userService.getUserByUserName(userName);
 
         JobApplication application = new JobApplication();
+
         application.setJobTitle(request.getJobTitle());
         application.setCompanyName(request.getCompanyName());
         application.setJobLink(request.getJobLink());
@@ -54,8 +58,8 @@ public class JobApplicationService {
 
         application.setAppliedAt(LocalDate.now());
         application.setLastUpdated(LocalDate.now());
-
         application.setUser(user);
+
        JobApplication saved =   jobApplicationRepo.save(application);
        return mapToResponse(saved);
 
@@ -64,6 +68,7 @@ public class JobApplicationService {
     private JobApplicationResponse mapToResponse(JobApplication application) {
 
         JobApplicationResponse response = new JobApplicationResponse();
+
         response.setId(application.getId());
         response.setJobTitle(application.getJobTitle());
         response.setCompanyName(application.getCompanyName());
@@ -88,7 +93,7 @@ public class JobApplicationService {
                 .orElseThrow(() -> new RuntimeException("Job application not found"));
 
         // user ownership check (important)
-        if(!job.getUser().equals(user.getId())){
+        if(!job.getUser().equals(user)){
             throw new RuntimeException("Unauthorized delete attempt");
         }
 

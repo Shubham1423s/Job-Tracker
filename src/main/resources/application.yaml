@@ -1,24 +1,27 @@
+#spring:
+#  application:
+#    name: JobTracker
+#
+#  datasource:
+#    url: jdbc:mysql://localhost:3306/job_tracker
+#    username: root
+#    password: shubham@1423
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#
+#  jpa:
+#    hibernate:
+#      ddl-auto: update
+#    show-sql: true
+#    properties:
+#      hibernate:
+#        org.hibernate.dialect.MySQL8Dialect
+#
+#
+#
+#jwt:
+#  secret: mySuperStrongJWTKeyIs@Shubham1423
+#
+#
 spring:
-  application:
-    name: JobTracker
-
-  datasource:
-    url: jdbc:mysql://localhost:3306/job_tracker
-    username: root
-    password: shubham@1423
-    driver-class-name: com.mysql.cj.jdbc.Driver
-
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-    properties:
-      hibernate:
-        org.hibernate.dialect.MySQL8Dialect
-
-
-
-jwt:
-  secret: mySuperStrongJWTKeyIs@Shubham1423
-
-
+  profiles:
+    active: dev

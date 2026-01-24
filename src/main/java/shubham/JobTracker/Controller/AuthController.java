@@ -1,5 +1,6 @@
 package shubham.JobTracker.Controller;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 //import shubham.JobTracker.Config.JwtUtil;
 import shubham.JobTracker.Config.JwtUtil;
+import shubham.JobTracker.Dto.Request.CreateUserRequest;
 import shubham.JobTracker.Dto.Request.LoginRequest;
 import shubham.JobTracker.Dto.Response.AuthResponse;
 import shubham.JobTracker.Dto.Request.ResetPasswordRequest;
@@ -41,12 +43,10 @@ public class AuthController {
     private UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<UserResponse<User>> singUp(@RequestBody User user){
-        if(userRepo.findByUserName(user.getUserName())!= null){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new UserResponse<>(null,"user Already Exist"));
-        }
-        userService.saveUser(user);;
-        return ResponseEntity.status(HttpStatus.OK).body(new UserResponse<>(null,"User Registered Successfully"));
+    public ResponseEntity<UserResponse> singUp(@Valid  @RequestBody CreateUserRequest request){
+
+      UserResponse response = userService.saveUser(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
 
     }
 
@@ -60,26 +60,23 @@ public class AuthController {
 
     }
     @PostMapping("/create-admin")
-    public ResponseEntity<UserResponse<User>> newAdmin(@RequestBody  User user){
-        if(userRepo.findByUserName(user.getUserName())!= null){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new UserResponse<>(user,"User Already Exist"));
+    public ResponseEntity<UserResponse> newAdmin(@Valid @RequestBody  CreateUserRequest request){
 
-        }
-        userService.saveAdmin(user);
-        return  ResponseEntity.status(HttpStatus.CREATED).body(new UserResponse<>(user,"Admin created"));
+       UserResponse response =  userService.saveAdmin(request);
+        return  ResponseEntity.status(HttpStatus.CREATED).body(response);
 
     }
     @PostMapping("/forgotPassword")
-    public ResponseEntity<?> forgotPassword(@RequestBody ResetPasswordRequest request){
+    public ResponseEntity<UserResponse> forgotPassword( @Valid  @RequestBody ResetPasswordRequest request){
 
         User user = userRepo.findByUserName(request.getUserName());
         if(user != null){
             user.setPassword(passwordEncoder.encode(request.getNewPassword()));
             userRepo.save(user);
-            return ResponseEntity.ok("Password reset successfully");
+            return  ResponseEntity.status(HttpStatus.OK).build();
 
         }
-        return  ResponseEntity.status(HttpStatus.NOT_FOUND).body(new UserResponse<>());
+        return  ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 
     }
 
