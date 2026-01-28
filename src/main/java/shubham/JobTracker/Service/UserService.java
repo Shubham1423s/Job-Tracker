@@ -37,7 +37,7 @@ public class UserService {
        user.setUserName(request.getUserName());
        user.setPassword(passwordEncoder.encode(request.getPassword()));
        user.setEmail(request.getEmail());
-       user.setRoles(Arrays.asList("User"));
+       user.setRole("USER");
 
        user.setCreatedAt(LocalDate.now());
        user.setLastLogin(LocalDate.now());
@@ -53,8 +53,7 @@ public class UserService {
             user.setUserName(request.getUserName());
             user.setPassword(passwordEncoder.encode(request.getPassword()));
             user.setEmail(request.getEmail());
-
-        user.setRoles(Arrays.asList("Admin","User"));
+        user.setRole("ADMIN");
         user.setCreatedAt(LocalDate.now());
         user.setLastLogin(LocalDate.now());
 

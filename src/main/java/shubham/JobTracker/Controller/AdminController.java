@@ -20,7 +20,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/Admin")
 @Slf4j
-@PreAuthorize("hasRole('Admin')")
+@PreAuthorize("hasRole('ADMIN')")
 public class AdminController {
 
     @Autowired
