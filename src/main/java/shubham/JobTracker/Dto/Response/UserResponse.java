@@ -1,5 +1,6 @@
 package shubham.JobTracker.Dto.Response;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,6 +17,7 @@ public class UserResponse {
 
     private Long id;
     private String userName;
+    @JsonIgnore
     private String password;
     private String  email;
     private LocalDate lastLogin;

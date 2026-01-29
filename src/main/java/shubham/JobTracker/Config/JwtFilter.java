@@ -16,47 +16,52 @@ import shubham.JobTracker.Service.UserDetailServiceImpl;
 import java.io.IOException;
 
 @Component
-public class JwtFilter  extends OncePerRequestFilter {
-
+public class JwtFilter extends OncePerRequestFilter {
 
     @Autowired
     private UserDetailServiceImpl userDetailService;
 
     @Autowired
-    private JwtUtil jwtUtil ;
-
+    private JwtUtil jwtUtil;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
+
+        // CRITICAL: Skip JWT validation for public endpoints
+        String path = request.getRequestURI();
+        if (path.startsWith("/Auth/") || path.startsWith("/check/")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         String authHeader = request.getHeader("Authorization");
-
-
         String userName = null;
-        String token  = null;
+        String token = null;
 
-        if(authHeader != null && authHeader.startsWith("Bearer ")){
-            System.out.println("header "+ authHeader);
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
             token = authHeader.substring(7);
-            userName = jwtUtil.extractUserName(token);
-            System.out.println(userName);// here is the user name
 
-        }
-
-        if(userName != null && SecurityContextHolder.getContext().getAuthentication()== null){
-            UserDetails userDetails = userDetailService.loadUserByUsername(userName);
-
-            if(jwtUtil.validateToken(token,userDetails)){
-                UsernamePasswordAuthenticationToken authToken  =
-                        new UsernamePasswordAuthenticationToken(userDetails,null,userDetails.getAuthorities());
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-                SecurityContextHolder.getContext().setAuthentication(authToken);
-
+            try {
+                userName = jwtUtil.extractUserName(token);
+            } catch (Exception e) {
+                // Token is invalid/expired - just continue without authentication
+                System.out.println("Token validation failed: " + e.getMessage());
             }
         }
-        filterChain.doFilter(request,response);
 
+        if (userName != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            UserDetails userDetails = userDetailService.loadUserByUsername(userName);
+
+            if (jwtUtil.validateToken(token, userDetails)) {
+                System.out.println("Valid token - user authenticated");
+                UsernamePasswordAuthenticationToken authToken =
+                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authToken);
+            }
+        }
+
+        filterChain.doFilter(request, response);
     }
 }
-

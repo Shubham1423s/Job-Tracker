@@ -42,12 +42,23 @@ public class AuthController {
     @Autowired
     private UserService userService;
 
+//    @PostMapping("/register")
+//    public ResponseEntity<UserResponse> singUp(@Valid  @RequestBody CreateUserRequest request){
+//
+//      UserResponse response = userService.saveUser(request);
+//        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+//
+//    }
     @PostMapping("/register")
-    public ResponseEntity<UserResponse> singUp(@Valid  @RequestBody CreateUserRequest request){
+    public ResponseEntity<AuthResponse> singUp(@Valid @RequestBody CreateUserRequest request){
 
-      UserResponse response = userService.saveUser(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        UserResponse userResponse = userService.saveUser(request);
 
+
+        String token = jwtUtil.generateToken(request.getUserName());
+
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(new AuthResponse(token));
     }
 
     @PostMapping("/login")
